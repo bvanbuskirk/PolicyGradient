@@ -162,7 +162,8 @@ class MLPPolicyPG(MLPPolicy):
                 ## ptu.from_numpy before using it in the loss
             q_values = normalize(q_values, np.mean(q_values), np.std(q_values))
             q_values = ptu.from_numpy(q_values)
-            observed_q_values = self.baseline(observations)
+            # thank you Anon Mantis (on Ed) for the recommendation on squeeze here
+            observed_q_values = torch.squeeze(self.baseline(observations))
             base_loss = self.baseline_loss(observed_q_values, q_values)
 
             self.baseline_optimizer.zero_grad()

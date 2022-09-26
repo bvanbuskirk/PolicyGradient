@@ -45,7 +45,6 @@ class PGAgent(BaseAgent):
         # return the train_log obtained from updating the policy
         q_vals = self.calculate_q_vals(rewards_list)
         advantages = self.estimate_advantage(observations, rewards_list, q_vals, terminals)
-        self.actor.update(observations, actions, advantages, q_vals)
         return self.actor.update(observations, actions, advantages, q_vals)
 
     def calculate_q_vals(self, rewards_list):
@@ -99,9 +98,6 @@ class PGAgent(BaseAgent):
 
             true_mean = np.mean(q_values)
             true_std = np.std(q_values)
-            pred_mean = np.mean(values_unnormalized)
-            pred_std = np.std(values_unnormalized)
-            values_unnormalized = normalize(values_unnormalized, pred_mean, pred_std)
             values = unnormalize(values_unnormalized, true_mean, true_std)
             
             if self.gae_lambda is not None:
