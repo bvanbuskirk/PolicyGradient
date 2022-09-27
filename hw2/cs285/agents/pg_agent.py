@@ -110,7 +110,7 @@ class PGAgent(BaseAgent):
                 ## create empty numpy array to populate with GAE advantage
                 ## estimates, with dummy T+1 value for simpler recursive calculation
                 batch_size = obs.shape[0]
-                advantages = np.zeros(batch_size + 1)
+                advantages = np.zeros(batch_size+1)
 
                 for i in reversed(range(batch_size)):
                     ''' 
@@ -123,8 +123,11 @@ class PGAgent(BaseAgent):
                     ## HINT: use terminals to handle edge cases. terminals[i]
                         ## is 1 if the state is the last in its trajectory, and
                         ## 0 otherwise.
-                    delta = rews[i] + self.gamma*values[i+1] - values[i]
-                    advantages[i] = np.array(delta+(self.gamma*self.gae_lambda*advantages[i+1]))
+                    if terminals[i] == 1:
+                        advantages[i] = rews[i] - values[i]
+                    else:
+                        delta = rews[i] + (self.gamma*values[i+1]) - values[i]
+                        advantages[i] = delta+(self.gamma*self.gae_lambda*advantages[i+1])
 
                 # remove dummy advantage
                 advantages = advantages[:-1]
